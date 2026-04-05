@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'poojabusa/my-devops-app'
+        IMAGE_NAME = 'busapooja/my-devops-app'
         CONTAINER_NAME = 'my-devops-container'
     }
 
@@ -10,9 +10,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/PoojaBusa09/my-devops-project.git',
-                    credentialsId: 'github-creds'
+                git 'https://github.com/PoojaBusa09/my-devops-project.git'
             }
         }
 
@@ -22,13 +20,17 @@ pipeline {
             }
         }
 
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    bat "echo %PASS% | docker login -u %USER% --password-stdin"
+                }
+            }
+        }
+
         stage('Push to DockerHub') {
             steps {
-                script {
-                    withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
-                        bat "docker push %IMAGE_NAME%"
-                    }
-                }
+                bat "docker push %IMAGE_NAME%"
             }
         }
 
@@ -40,7 +42,7 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                bat "docker run -d -p 9091:80 --name %CONTAINER_NAME% %IMAGE_NAME%"
+                bat "docker run -d -p 8080:80 --name %CONTAINER_NAME% %IMAGE_NAME%"
             }
         }
     }
