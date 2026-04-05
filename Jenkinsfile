@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'poojabusa/my-devops-app'
+        IMAGE_NAME = 'busapooja/webapp'
         CONTAINER_NAME = 'my-devops-container'
     }
 
@@ -25,7 +25,7 @@ pipeline {
         stage('Docker Login') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'docker-hub-creds',
+                    credentialsId: 'docker-creds',
                     usernameVariable: 'USER',
                     passwordVariable: 'PASS'
                 )]) {
