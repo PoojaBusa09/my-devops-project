@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'busapooja/my-devops-app'
+        IMAGE_NAME = 'poojabusa/my-devops-app'
         CONTAINER_NAME = 'my-devops-container'
     }
 
@@ -10,7 +10,9 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/PoojaBusa09/my-devops-project.git'
+                git branch: 'main',
+                    url: 'https://github.com/PoojaBusa09/my-devops-project.git',
+                    credentialsId: 'github-creds'
             }
         }
 
