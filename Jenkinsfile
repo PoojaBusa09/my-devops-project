@@ -22,6 +22,16 @@ pipeline {
             }
         }
 
+        stage('Push to DockerHub') {
+            steps {
+                script {
+                    withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
+                        bat "docker push %IMAGE_NAME%"
+                    }
+                }
+            }
+        }
+
         stage('Remove Old Container') {
             steps {
                 bat "docker rm -f %CONTAINER_NAME% || exit 0"
@@ -30,17 +40,7 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                bat "docker run -d -p 9090:80 --name %CONTAINER_NAME% %IMAGE_NAME%"
-            }
-        }
-
-        stage('Push to DockerHub') {
-            steps {
-                script {
-                    withDockerRegistry([credentialsId: 'docker', url: 'https://index.docker.io/v1/']) {
-                        bat "docker push %IMAGE_NAME%"
-                    }
-                }
+                bat "docker run -d -p 9091:80 --name %CONTAINER_NAME% %IMAGE_NAME%"
             }
         }
     }
