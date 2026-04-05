@@ -38,19 +38,20 @@ pipeline {
             }
         }
 
-        stage('Push to DockerHub') {
+stage('Push to DockerHub') {
             steps {
-                bat "docker push %IMAGE_NAME%"
+                bat '''
+                echo Pushing image...
+                docker push %IMAGE_NAME%
+                '''
             }
         }
 
         stage('Remove Old Container') {
             steps {
                 bat '''
-                docker ps -a -q --filter "name=%CONTAINER_NAME%" > container.txt
-                set /p CONTAINER_ID=<container.txt
-                if not "%CONTAINER_ID%"=="" docker rm -f %CONTAINER_NAME%
-                del container.txt
+                echo Removing old container if exists...
+                docker rm -f %CONTAINER_NAME% >nul 2>&1
                 '''
             }
         }
@@ -58,6 +59,7 @@ pipeline {
         stage('Run Container') {
             steps {
                 bat '''
+                echo Running container...
                 docker run -d -p 8080:80 --name %CONTAINER_NAME% %IMAGE_NAME%
                 '''
             }
