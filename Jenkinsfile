@@ -5,7 +5,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/PoojaBusa09/my-devops-project.git
+                git 'https://github.com/PoojaBusa09/my-devops-project.git'
 '
             }
         }
