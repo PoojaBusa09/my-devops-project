@@ -3,21 +3,22 @@ pipeline {
 
     stages {
 
-        stage('Clone Repo') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/YOUR_USERNAME/my-devops-project.git'
+                git 'https://github.com/PoojaBusa09/my-devops-project.git
+'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t my-devops-app .'
+                bat 'docker build -t my-devops-app .'
             }
         }
 
         stage('Run Container') {
             steps {
-                sh 'docker run -d -p 8080:80 my-devops-app'
+                bat 'docker run -d -p 9090:80 my-devops-app'
             }
         }
     }
