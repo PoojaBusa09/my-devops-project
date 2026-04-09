@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'busapooja/webapp'
+        IMAGE_NAME = 'busapooja/webapp:latest'
         CONTAINER_NAME = 'my-devops-container'
     }
 
@@ -26,22 +26,19 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-hub-creds',
-                    usernameVariable: 'USER',
-                    passwordVariable: 'PASS'
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
                 )]) {
                     bat '''
-                    echo %PASS% > pass.txt
-                    docker login -u %USER% --password-stdin < pass.txt
-                    del pass.txt
+                    echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
                     '''
                 }
             }
         }
 
-stage('Push to DockerHub') {
+        stage('Push to DockerHub') {
             steps {
                 bat '''
-                echo Pushing image...
                 docker push %IMAGE_NAME%
                 '''
             }
@@ -50,7 +47,6 @@ stage('Push to DockerHub') {
         stage('Remove Old Container') {
             steps {
                 bat '''
-                echo Removing old container if exists...
                 docker rm -f %CONTAINER_NAME% >nul 2>&1
                 '''
             }
@@ -59,7 +55,6 @@ stage('Push to DockerHub') {
         stage('Run Container') {
             steps {
                 bat '''
-                echo Running container...
                 docker run -d -p 5000:80 --name %CONTAINER_NAME% %IMAGE_NAME%
                 '''
             }
