@@ -45,11 +45,9 @@ pipeline {
             }
         }
 
-        stage('Remove Old Container') {
+         stage('Push to DockerHub') {
             steps {
-                bat '''
-                docker rm -f %CONTAINER_NAME% >nul 2>&1
-                '''
+                bat "docker push %IMAGE_NAME%"
             }
         }
 
